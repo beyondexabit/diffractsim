@@ -14,7 +14,7 @@ All rights reserved.
 
 def plot_intensity(self, I, square_root = False, figsize=(7, 6), 
                   xlim=None, ylim=None, grid = False, text = None, units = mm,
-                  slice_y_pos = None, slice_x_pos = None, dark_background = True):
+                  slice_y_pos = None, slice_x_pos = None, dark_background = True, use_log_scale = True):
     """visualize the diffraction pattern intesity with matplotlib"""
     
     from ..util.backend_functions import backend as bd
@@ -100,9 +100,10 @@ def plot_intensity(self, I, square_root = False, figsize=(7, 6),
     else:
         cb.set_label(r'Square Root Intensity $\left[ \sqrt{W / m^2 } \right]$', fontsize=10, labelpad =  10 )
     ax.set_aspect('equal')
+
+    if use_log_scale == True:
+        I = np.log(1 + I)
     
-
-
     if slice_y_pos != None:
         ax_slice = fig.add_subplot(1, 2, 2)
         plt.subplots_adjust(wspace=0.3)
@@ -173,4 +174,4 @@ def plot_intensity(self, I, square_root = False, figsize=(7, 6),
 
 
 
-    plt.show()
+    #plt.show()

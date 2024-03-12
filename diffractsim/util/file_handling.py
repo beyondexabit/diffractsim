@@ -32,6 +32,8 @@ def load_graymap_image_as_array(string, new_size = None):
 
 def save_phase_mask_as_image(string, phase_mask, phase_mask_format = 'hsv'):
 
+    phase_mask_format = 'xxx'
+
     if phase_mask_format =='hsv':
 
         from matplotlib.colors import hsv_to_rgb

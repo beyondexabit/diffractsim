@@ -5,7 +5,7 @@ from ..util.bluestein_FFT import bluestein_fft2, bluestein_ifft2, bluestein_fftf
 
 from ..util.backend_functions import backend as bd
 import progressbar
-
+import matplotlib.pyplot as plt
 
 """
 
@@ -81,6 +81,12 @@ class FourierPhaseRetrieval():
             # undo padding
             self.retrieved_phase = self.retrieved_phase[self.Ny//2:-self.Ny//2, self.Nx//2:-self.Nx//2]
 
+            '''
+            plt.figure()
+            plt.imshow(self.retrieved_phase)
+            plt.colorbar()
+            plt.show()
+            '''
 
         elif method == 'Conjugate-Gradient':
 
@@ -144,7 +150,7 @@ class FourierPhaseRetrieval():
 
         
     def save_retrieved_phase_as_image(self, name, phase_mask_format = 'hsv'):
-
+        phase_mask_format = 'gs'
 
         if bd == np:
             save_phase_mask_as_image(name, self.retrieved_phase, phase_mask_format = phase_mask_format)

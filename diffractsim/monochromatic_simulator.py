@@ -219,12 +219,28 @@ class MonochromaticField:
         return self.E
 
 
+    def update_field(self, transmissions):
+        """get field of the cross-section profile at the current distance"""
+        self.E = self.E * transmissions
+        return self.E   
+
+
     def get_intensity(self):
         """compute field intensity of the cross-section profile at the current distance"""
 
         return bd.real(self.E * bd.conjugate(self.E))  
 
 
+    def centre_field(self, centre_x, centre_y):
+        """
+        Shift the field by a number of pixels in the x and y directions
+        """
+
+        # Shift right by 1 element
+        newE = np.roll(self.E, centre_x, axis=1)  # shift along axis 1 (columns)
+        newE = np.roll(newE, centre_y, axis=0)  # shift along axis 1 (columns)
+        self.E = newE
+ 
 
     def compute_colors_at(self, z):
         """propagate the field to a distance equal to z and compute the RGB colors of the beam profile"""
@@ -261,7 +277,6 @@ class MonochromaticField:
         self.dy = self.extent_y/Ny
 
         self.E = bd.array(fun_real(self.dx*(np.arange(Nx)-Nx//2), self.dy*(np.arange(Ny)-Ny//2))  +  fun_imag(self.dx*(np.arange(Nx)-Nx//2), self.dy*(np.arange(Ny)-Ny//2))*1j)
-
 
         self.x = self.dx*(bd.arange(Nx)-Nx//2)
         self.y = self.dy*(bd.arange(Ny)-Ny//2)

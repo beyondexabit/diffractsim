@@ -1,21 +1,32 @@
 import diffractsim
 diffractsim.set_backend("CPU")
 
-from diffractsim import MonochromaticField, mm, nm, cm, CustomPhaseRetrieval, ApertureFromImage
-
+from diffractsim import MonochromaticField, mm, nm, cm, CustomPhaseRetrieval, ApertureFromImage, FourierPhaseRetrieval
+import sys
 
 #Note: CustomPhaseRetrieval requires autograd which is not installed by default with diffractsim. 
 # To install autograd, type: 'pip install autograd'
 
 
+'''
 # Generate a 30cm plane phase hologram
 distance = 30*cm
-PR = CustomPhaseRetrieval(wavelength=532 * nm, z = distance, extent_x=30 * mm, extent_y=30 * mm, Nx=2048, Ny=2048)
+PR = FourierPhaseRetrieval(wavelength=532 * nm, z = distance, extent_x=30 * mm, extent_y=30 * mm, Nx=2048, Ny=2048)
 
 PR.set_source_amplitude(amplitude_mask_path= "/Users/jakubkostial/Documents/phd/code/dsim/diffractsim/examples/apertures/white_background.png", image_size=(15.0 * mm, 15.0 * mm))
 PR.set_target_amplitude(amplitude_mask_path= "/Users/jakubkostial/Documents/phd/code/dsim/diffractsim/examples/apertures/USAF_test.png", image_size=(15.0 * mm, 15.0 * mm))
 
 PR.retrieve_phase_mask(max_iter = 15, method = 'Adam-Optimizer')
+'''
+# Generate a Fourier plane phase hologram
+
+PR = FourierPhaseRetrieval(target_amplitude_path = '/Users/jakubkostial/Documents/phd/code/dsim/diffractsim/examples/apertures/snowflake.png', new_size= (400,400), pad = (200,200))
+PR.retrieve_phase_mask(max_iter = 20, method = 'Gerchberg-Saxton')
+PR.save_retrieved_phase_as_image('snowflake_phase_hologram_greyscale.png')
+
+
+sys.exit()
+
 PR.save_retrieved_phase_as_image('USAF_hologram.png')
 
 
@@ -28,7 +39,7 @@ F = MonochromaticField(
 
 
 F.add(ApertureFromImage(
-     amplitude_mask_path= "./apertures/white_background.png", 
+     amplitude_mask_path= "/Users/jakubkostial/Documents/phd/code/dsim/diffractsim/examples/apertures/white_background.png", 
      image_size=(15.0    * mm, 15.0  * mm), simulation = F)
 )
 

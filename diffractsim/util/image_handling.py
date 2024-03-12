@@ -1,6 +1,8 @@
 from PIL import Image
 import numpy as np
-
+from scipy import ndimage
+import cv2
+from PIL import Image
 
 """
 
@@ -12,7 +14,7 @@ All rights reserved.
 """
 
 
-def rescale_img_to_custom_coordinates(img, image_size, extent_x,extent_y, Nx, Ny):
+def rescale_img_to_custom_coordinates(img, image_size, extent_x, extent_y, Nx, Ny):
 
     img_pixels_width, img_pixels_height = img.size
 
@@ -31,6 +33,34 @@ def rescale_img_to_custom_coordinates(img, image_size, extent_x,extent_y, Nx, Ny
     
     dst_img.paste( img , box = (Ox, Oy ))
     return dst_img
+
+
+def rescale_array_to_custom_coordinates(img, image_size, extent_x, extent_y, Nx, Ny):
+    #img_pixels_width, img_pixels_height = img.shape[:2]
+    '''
+    if image_size is not None:
+        new_img_pixels_width, new_img_pixels_height = int(np.round(image_size[0] / extent_x * Nx)), int(np.round(image_size[1] / extent_y * Ny))
+    else:
+        new_img_pixels_width, new_img_pixels_height = Nx, Ny
+    '''
+    
+    new_img_pixels_width, new_img_pixels_height = Nx, Ny
+
+    im = Image.fromarray(img)
+    resized_img_array = np.array(im.resize((new_img_pixels_width, new_img_pixels_height)))
+    
+    # Resize image array (assuming grayscale)
+    #resized_img_array = img.resize((new_img_pixels_width, new_img_pixels_height))
+
+    dst_img_array = np.zeros((Nx, Ny), dtype=np.uint8)  # Create grayscale destination
+    Ox, Oy = (dst_img_array.shape[0] - new_img_pixels_height) // 2, (dst_img_array.shape[1] - new_img_pixels_width) // 2
+
+    print(Nx, Ny)
+    print(dst_img_array.shape)
+
+    dst_img_array[Oy:Oy+new_img_pixels_height, Ox:Ox+new_img_pixels_width] = resized_img_array
+
+    return dst_img_array
 
 
 def convert_graymap_image_to_hsvmap_image(img):
@@ -52,7 +82,6 @@ def convert_graymap_image_to_hsvmap_image(img):
                Image.fromarray((np.round(255 * rgb[:,:,2])).astype(np.uint8), "L")]
 
     return Image.merge("RGB", img_RGB)
-
 
 
 def resize_array(img_array, new_shape):
