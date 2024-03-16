@@ -14,9 +14,9 @@ F = MonochromaticField(
 )
 
 #SMF amplitude mask
-F.add(ApertureFromImage(amplitude_mask_path = "/home/ucapajk/Documents/Code/diffractsim_f/diffractsim/examples/apertures/white_background.png", image_size=(13854 * um, 8640 * um), simulation = F))
+F.add(ApertureFromImage(amplitude_mask_path = "diffractsim/examples/apertures/white_background.png", image_size=(13854 * um, 8640 * um), simulation = F))
 #F.add(ApertureFromImage(amplitude_mask_path = "../diffractsim/examples/apertures/white_background.png", image_size=(13854 * um, 8640 * um), simulation = F))
-
+F.propagate(10*cm)
 
 distance = 10*cm
 #F.propagate(distance)
@@ -24,6 +24,10 @@ distance = 10*cm
 
 # SLM
 F.add(ApertureFromArray(phase_mask = "diffractsim/masks/holograms/formatted_matrices_individual/l1/phase_pattern_l1_20gfx-46gfy_00_10_00_test.npy", image_size=(15360 * um, 8640 * um), simulation = F))
+F.propagate(1*cm)
+I1 = F.get_intensity()
+F.plot_intensity(I1, square_root = True, units = mm, grid = True, figsize = (14,5), use_log_scale = True)
+plot_field(I1, "at holo")
 
 F.propagate(10*cm)
 # take Fourier transform
@@ -31,7 +35,7 @@ F.add(Lens(f = 10*cm))
 F.propagate(10*cm)
 
 # aperture
-F.add(ApertureFromArray(amplitude_mask = "/home/ucapajk/Documents/Code/diffractsim_f/diffractsim/masks/holograms/amplitude_masks/aperture1_l.npy", image_size=(30 * mm, 30 * mm), simulation = F))
+F.add(ApertureFromArray(amplitude_mask = "diffractsim/masks/holograms/amplitude_masks/aperture1_l.npy", image_size=(30 * mm, 30 * mm), simulation = F))
 # Assuming holo is at centre with a grating frequency of 21.6
 
 
@@ -49,9 +53,17 @@ F.plot_intensity(I1, square_root = True, units = mm, grid = True, figsize = (14,
 
 
 plt.show()
-sys.exit()
+#sys.exit()
 
 #1146 - 1024 = (122 * 8e-6) = 0.000976, measurement from plot
 # With calculation from grating: 0.0008970268285146004
 
-# Real angle of propagation = 
+# Measured: 
+# x coordinate at image plane x= 1.75mm, after 20cm propagation, x= 11.72
+# Real angle of propagation = 2.853832227448092 degs
+realangle = (np.arctan((0.01172-0.00175)/0.2))
+print(np.degrees(realangle))
+ld = np.tan(realangle)*0.2 - 0.000976
+print(ld)
+
+
